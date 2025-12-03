@@ -1,6 +1,5 @@
 'use client';
 
-import { RotateCcw } from "lucide-react";
 import { Button } from "./ui/button";
 import { SearchInput } from "./search-input";
 import { ScrollArea } from "./ui/scroll-area";
@@ -12,7 +11,6 @@ import { useTheme } from "@/app/providers";
 type InboxSidebarProps = {
   sessions?: SessionSummary[];
   isLoading: boolean;
-  isRefetching: boolean;
   error?: Error | null;
   selectedSessionId: string | null;
   onSelect: (sessionId: string) => void;
@@ -24,7 +22,6 @@ type InboxSidebarProps = {
 export function InboxSidebar({
   sessions,
   isLoading,
-  isRefetching,
   error,
   selectedSessionId,
   onSelect,
@@ -55,22 +52,6 @@ export function InboxSidebar({
             Conversation Inbox
           </p>
         </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          aria-label="Refresh sessions"
-          onClick={onRefresh}
-          disabled={isRefetching}
-          className={
-            isDark
-              ? "h-8 w-8 rounded-full border border-slate-700 text-slate-200 hover:bg-slate-900"
-              : undefined
-          }
-        >
-          <RotateCcw
-            className={`h-4 w-4 ${isRefetching ? "animate-spin" : ""}`}
-          />
-        </Button>
       </div>
       <div className="px-4">
         <SearchInput value={searchValue} onChange={onSearchChange} />

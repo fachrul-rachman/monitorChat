@@ -10,6 +10,7 @@ import { useDebouncedValue } from "@/hooks/use-debounced-value";
 import { useRealtimeUpdates } from "@/hooks/use-realtime-updates";
 import { useTheme } from "@/app/providers";
 import { Button } from "./ui/button";
+import { Download } from "lucide-react";
 
 export function ChatDashboard() {
   const { theme } = useTheme();
@@ -37,7 +38,6 @@ export function ChatDashboard() {
   const {
     data: sessions,
     isLoading: sessionsLoading,
-    isRefetching: sessionsRefetching,
     error: sessionsError,
     refetch: refetchSessions,
   } = useQuery({
@@ -64,7 +64,6 @@ export function ChatDashboard() {
     isLoading: messagesLoading,
     error: messagesError,
     refetch: refetchMessages,
-    isRefetching: messagesRefetching,
   } = useQuery({
     queryKey: ["messages", source, selectedSessionId],
     queryFn: () => fetchMessages(selectedSessionId as string, source),
@@ -174,6 +173,40 @@ export function ChatDashboard() {
               Lestari
             </Button>
           </div>
+          <Button
+            variant="outline"
+            size="sm"
+                       className={
+              isDark
+                ? "border-slate-700 bg-slate-900 text-slate-100 hover:bg-slate-800 disabled:opacity-60"
+                : "disabled:opacity-60"
+            }
+            onClick={async () => {
+              const tenant = source === "lestari" ? "lestari" : "al-azhar";
+              try {
+                const response = await fetch(`/api/export?tenant=${tenant}`);
+                if (!response.ok) {
+                  const message = await response.text();
+                  throw new Error(message || "Failed to export chats.");
+                }
+                const blob = await response.blob();
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement("a");
+                link.href = url;
+                link.download = "chats-all.csv";
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+                URL.revokeObjectURL(url);
+              } catch (error) {
+                console.error(error);
+                window.alert("Unable to export all chats. Please try again.");
+              }
+            }}
+          >
+            <Download className="mr-2 h-4 w-4" />
+            Export all
+          </Button>
           <ThemeToggle />
         </div>
       </header>
@@ -183,7 +216,6 @@ export function ChatDashboard() {
           <InboxSidebar
             sessions={filteredSessions}
             isLoading={sessionsLoading}
-            isRefetching={sessionsRefetching}
             error={normalizedSessionsError}
             selectedSessionId={selectedSessionId}
             onSelect={setManualSessionId}
@@ -194,11 +226,11 @@ export function ChatDashboard() {
         </div>
         <ChatPanel
           selectedSessionId={selectedSessionId}
+          source={source}
           messages={messages}
           isLoading={messagesLoading && Boolean(selectedSessionId)}
           error={normalizedMessagesError}
           onRefresh={handleRefresh}
-          isRefetching={messagesRefetching || sessionsRefetching}
           lastActivity={activeSession?.last_message_at}
           isRealtimeConnected={realtimeConnected}
         />

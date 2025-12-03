@@ -1,35 +1,88 @@
 'use client';
 
-import { Download, RotateCcw } from "lucide-react";
+import { Download } from "lucide-react";
 import type { ChatMessage } from "@/lib/types";
 import { Button } from "./ui/button";
 import { MessageList } from "./message-list";
 import { formatHeaderTimestamp, formatRelativeTime } from "@/lib/time";
 import { useTheme } from "@/app/providers";
+import type { DataSource } from "@/lib/api";
 
 type ChatPanelProps = {
   selectedSessionId: string | null;
+  source: DataSource;
   messages?: ChatMessage[];
   isLoading: boolean;
   error?: Error | null;
   onRefresh: () => void;
-  isRefetching: boolean;
   lastActivity?: string;
   isRealtimeConnected: boolean;
 };
 
 export function ChatPanel({
   selectedSessionId,
+  source,
   messages,
   isLoading,
   error,
   onRefresh,
-  isRefetching,
   lastActivity,
   isRealtimeConnected,
 }: ChatPanelProps) {
   const { theme } = useTheme();
   const isDark = theme === "dark";
+
+  const tenant = source === "lestari" ? "lestari" : "al-azhar";
+
+  const handleExportSingle = async () => {
+    if (!selectedSessionId) return;
+
+    try {
+      const response = await fetch(
+        `/api/export?tenant=${tenant}&session_id=${encodeURIComponent(
+          selectedSessionId,
+        )}`,
+      );
+      if (!response.ok) {
+        const message = await response.text();
+        throw new Error(message || "Failed to export chat.");
+      }
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `chat-${selectedSessionId}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error(error);
+      window.alert("Unable to export this chat. Please try again.");
+    }
+  };
+
+  const handleExportAll = async () => {
+    try {
+      const response = await fetch(`/api/export?tenant=${tenant}`);
+      if (!response.ok) {
+        const message = await response.text();
+        throw new Error(message || "Failed to export chats.");
+      }
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "chats-all.csv";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error(error);
+      window.alert("Unable to export all chats. Please try again.");
+    }
+  };
 
   return (
     <section
@@ -71,22 +124,21 @@ export function ChatPanel({
           <Button
             variant="outline"
             size="sm"
-            onClick={onRefresh}
-            disabled={isRefetching}
+            onClick={handleExportSingle}
+            disabled={!selectedSessionId}
             className={
               isDark
-                ? "border-slate-700 bg-slate-900 text-slate-100 hover:bg-slate-800"
-                : undefined
+                ? "border-slate-700 bg-slate-900 text-slate-100 hover:bg-slate-800 disabled:opacity-60"
+                : "disabled:opacity-60"
             }
           >
-            <RotateCcw
-              className={`mr-2 h-4 w-4 ${isRefetching ? "animate-spin" : ""}`}
-            />
-            Refresh
+            <Download className="mr-2 h-4 w-4" />
+            Export This chat
           </Button>
-          <Button
+          {/* <Button
             variant="outline"
             size="sm"
+            onClick={handleExportAll}
             className={
               isDark
                 ? "border-slate-700 bg-slate-900 text-slate-100 hover:bg-slate-800"
@@ -94,8 +146,8 @@ export function ChatPanel({
             }
           >
             <Download className="mr-2 h-4 w-4" />
-            Export
-          </Button>
+            Export all
+          </Button> */}
         </div>
       </header>
 
