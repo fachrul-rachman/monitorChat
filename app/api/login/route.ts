@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
   response.cookies.set("dashboard_auth", "1", {
     httpOnly: true,
     sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
+    secure: false,
     path: "/monitorchatAI",
     maxAge: 60 * 60 * 8,
   });
