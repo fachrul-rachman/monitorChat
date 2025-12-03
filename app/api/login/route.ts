@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
     httpOnly: true,
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",
-    path: "/",
+    path: "/monitorchatAI",
     maxAge: 60 * 60 * 8,
   });
 
