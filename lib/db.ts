@@ -1,4 +1,4 @@
-import { Pool } from "pg";
+import { Pool, type QueryResultRow } from "pg";
 
 export type Tenant = "al-azhar" | "lestari";
 
@@ -61,7 +61,7 @@ function getPool(tenant: Tenant = "al-azhar"): Pool {
   throw new Error("No database connection is configured.");
 }
 
-export async function query<T = unknown>(
+export async function query<T extends QueryResultRow = QueryResultRow>(
   text: string,
   params: (string | number)[] = [],
   tenant: Tenant = "al-azhar",

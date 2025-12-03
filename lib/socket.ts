@@ -3,18 +3,23 @@ import { io } from "socket.io-client";
 
 let socketInstance: Socket | null = null;
 
-const DEFAULT_SOCKET_URL = "http://localhost:4000";
-
 function resolveSocketUrl() {
   if (typeof window === "undefined") {
     return undefined;
   }
 
-  return (
-    process.env.NEXT_PUBLIC_SOCKET_URL ||
-    process.env.SOCKET_URL ||
-    DEFAULT_SOCKET_URL
-  );
+  const envUrl =
+    process.env.NEXT_PUBLIC_SOCKET_URL || process.env.SOCKET_URL || "";
+
+  if (envUrl) {
+    return envUrl;
+  }
+
+  if (process.env.NODE_ENV === "development") {
+    return "http://localhost:4000";
+  }
+
+  return undefined;
 }
 
 export function getSocket() {

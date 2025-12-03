@@ -39,7 +39,7 @@ export function ChatPanel({
 
     try {
       const response = await fetch(
-        `/api/export?tenant=${tenant}&session_id=${encodeURIComponent(
+        `api/export?tenant=${tenant}&session_id=${encodeURIComponent(
           selectedSessionId,
         )}`,
       );
@@ -64,7 +64,7 @@ export function ChatPanel({
 
   const handleExportAll = async () => {
     try {
-      const response = await fetch(`/api/export?tenant=${tenant}`);
+      const response = await fetch(`api/export?tenant=${tenant}`);
       if (!response.ok) {
         const message = await response.text();
         throw new Error(message || "Failed to export chats.");

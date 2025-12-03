@@ -22,7 +22,7 @@ function toTenant(source: DataSource) {
 
 export async function fetchSessions(source: DataSource) {
   const tenant = toTenant(source);
-  const response = await fetch(`/api/sessions?tenant=${tenant}`, {
+  const response = await fetch(`api/sessions?tenant=${tenant}`, {
     cache: "no-store",
   });
   const payload = await handleResponse<SessionsResponse>(response);
@@ -32,7 +32,7 @@ export async function fetchSessions(source: DataSource) {
 export async function fetchMessages(sessionId: string, source: DataSource) {
   const tenant = toTenant(source);
   const response = await fetch(
-    `/api/sessions/${encodeURIComponent(
+    `api/sessions/${encodeURIComponent(
       sessionId,
     )}/messages?tenant=${tenant}`,
     { cache: "no-store" },

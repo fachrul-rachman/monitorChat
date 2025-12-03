@@ -184,7 +184,7 @@ export function ChatDashboard() {
             onClick={async () => {
               const tenant = source === "lestari" ? "lestari" : "al-azhar";
               try {
-                const response = await fetch(`/api/export?tenant=${tenant}`);
+                const response = await fetch(`api/export?tenant=${tenant}`);
                 if (!response.ok) {
                   const message = await response.text();
                   throw new Error(message || "Failed to export chats.");
