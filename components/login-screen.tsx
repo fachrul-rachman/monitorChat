@@ -38,7 +38,7 @@ export function LoginScreen() {
         return;
       }
 
-      router.refresh();
+      router.replace("/");
     } catch (error_) {
       setError(
         error_ instanceof Error
