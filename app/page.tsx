@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { cookies } from "next/headers";
 import { ChatDashboard } from "@/components/chat-dashboard";
 import { LoginScreen } from "@/components/login-screen";
