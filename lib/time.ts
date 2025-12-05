@@ -14,9 +14,7 @@ const relativeFormatter = new Intl.RelativeTimeFormat(undefined, {
 
 export function formatRelativeTime(input: string | number | Date) {
   const date = new Date(input);
-  // We want "how long ago" something happened, so
-  // positive numbers mean "in the past" for the formatter.
-  const diff = (Date.now() - date.getTime()) / 1000;
+  const diff = (date.getTime() - Date.now()) / 1000;
   let duration = diff;
 
   for (const division of DIVISIONS) {

@@ -4,7 +4,7 @@ import { Download } from "lucide-react";
 import type { ChatMessage } from "@/lib/types";
 import { Button } from "./ui/button";
 import { MessageList } from "./message-list";
-import { formatHeaderTimestamp, formatRelativeTime } from "@/lib/time";
+import { formatHeaderTimestamp } from "@/lib/time";
 import { useTheme } from "@/app/providers";
 import type { DataSource } from "@/lib/api";
 
@@ -115,8 +115,7 @@ export function ChatPanel({
           </div>
           {lastActivity && (
             <p className="text-sm text-slate-400">
-              Last activity {formatRelativeTime(lastActivity)} -{" "}
-              {formatHeaderTimestamp(lastActivity)}
+              Last activity {formatHeaderTimestamp(lastActivity)}
             </p>
           )}
         </div>

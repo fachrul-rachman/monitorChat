@@ -1,7 +1,7 @@
 'use client';
 
 import type { SessionSummary } from "@/lib/types";
-import { formatRelativeTime } from "@/lib/time";
+import { formatTimestampLabel } from "@/lib/time";
 import { cn } from "@/lib/utils";
 
 type SessionListItemProps = {
@@ -27,7 +27,7 @@ export function SessionListItem({
       <div className="flex items-center justify-between text-sm font-semibold text-slate-900">
         <span className="truncate">{session.session_id}</span>
         <span className="text-xs font-normal text-slate-500">
-          {formatRelativeTime(session.last_message_at)}
+          {formatTimestampLabel(session.last_message_at)}
         </span>
       </div>
       <p className="mt-1 line-clamp-2 text-sm text-slate-600">
