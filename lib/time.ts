@@ -32,17 +32,21 @@ export function formatRelativeTime(input: string | number | Date) {
 
 export function formatTimestampLabel(input: string | number | Date) {
   const date = new Date(input);
-  return date.toLocaleString(undefined, {
-    hour: "numeric",
-    minute: "numeric",
+  return date.toLocaleTimeString(undefined, {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+    timeZone: "UTC",
   });
 }
 
 export function formatHeaderTimestamp(input: string | number | Date) {
   const date = new Date(input);
   return date.toLocaleString(undefined, {
+    timeZone: "UTC",
     weekday: "short",
-    hour: "numeric",
-    minute: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
   });
 }
