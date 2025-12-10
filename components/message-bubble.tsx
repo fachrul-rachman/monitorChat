@@ -19,20 +19,20 @@ export function MessageBubble({
   return (
     <div
       className={cn(
-        "flex w-full px-2 sm:px-4",
+        "flex w-full px-3 sm:px-4",
         isHuman ? "justify-start" : "justify-end",
         !isFirstOfGroup && "-mt-1.5",
       )}
     >
       <div
         className={cn(
-          "w-full max-w-full sm:max-w-[72%] md:max-w-[64%] rounded-2xl px-4 py-2 text-sm shadow-sm",
+          "inline-block max-w-[86%] sm:max-w-[72%] md:max-w-[64%] rounded-2xl px-4 py-2 text-sm shadow-sm",
           isHuman
-            ? "mr-auto rounded-bl-sm bg-white text-slate-900"
-            : "ml-auto rounded-br-sm bg-emerald-600 text-white",
+            ? "rounded-bl-sm bg-white text-slate-900"
+            : "rounded-br-sm bg-emerald-600 text-white",
         )}
       >
-        <p className="whitespace-pre-wrap break-words">
+        <p className="whitespace-pre-wrap break-words break-all">
           {parts.map((part, index) => {
             const match = part.match(/^\*\*(.+)\*\*$/);
             if (match) {
