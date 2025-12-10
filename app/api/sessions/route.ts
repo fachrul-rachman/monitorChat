@@ -56,8 +56,21 @@ export async function GET(request: Request) {
     return NextResponse.json(payload);
   } catch (error) {
     console.error("Failed to fetch sessions", error);
+
+    const baseMessage = "Unable to fetch sessions.";
+    let message = baseMessage;
+
+    if (error instanceof Error) {
+      if (error.message.includes("No database connection is configured")) {
+        message =
+          "Database connection is not configured. Please set DATABASE_URL / LESTARI_DATABASE_URL.";
+      } else {
+        message = `${baseMessage} ${error.message}`;
+      }
+    }
+
     return NextResponse.json(
-      { error: "Unable to fetch sessions." },
+      { error: message },
       { status: 500 },
     );
   }

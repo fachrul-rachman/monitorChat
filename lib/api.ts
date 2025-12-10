@@ -9,8 +9,28 @@ export type DataSource = "al-azhar" | "lestari";
 
 async function handleResponse<T>(response: Response) {
   if (!response.ok) {
-    const message = await response.text();
-    throw new Error(message || "Unexpected API error.");
+    const text = await response.text();
+    let message = "Unexpected API error.";
+
+    if (text) {
+      try {
+        const data = JSON.parse(text) as unknown;
+        if (
+          data &&
+          typeof data === "object" &&
+          "error" in data &&
+          typeof (data as { error: unknown }).error === "string"
+        ) {
+          message = (data as { error: string }).error;
+        } else {
+          message = text;
+        }
+      } catch {
+        message = text;
+      }
+    }
+
+    throw new Error(message);
   }
 
   return (await response.json()) as T;
