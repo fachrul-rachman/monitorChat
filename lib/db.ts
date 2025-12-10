@@ -21,14 +21,30 @@ if (!alAzharConnectionString) {
 function createPool(connectionString: string | undefined) {
   if (!connectionString) return undefined;
 
+  let ssl:
+    | boolean
+    | {
+        rejectUnauthorized: boolean;
+      }
+    | undefined;
+
+  const sslMode =
+    process.env.DB_SSL_MODE?.toLowerCase() ||
+    process.env.PGSSLMODE?.toLowerCase();
+
+  if (sslMode) {
+    if (["disable", "false", "0", "off", "no"].includes(sslMode)) {
+      ssl = false;
+    } else {
+      ssl = { rejectUnauthorized: false };
+    }
+  } else if (process.env.NODE_ENV === "production") {
+    ssl = { rejectUnauthorized: false };
+  }
+
   return new Pool({
     connectionString,
-    ssl:
-      process.env.NODE_ENV === "production"
-        ? {
-            rejectUnauthorized: false,
-          }
-        : undefined,
+    ssl,
   });
 }
 
