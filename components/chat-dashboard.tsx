@@ -136,7 +136,9 @@ export function ChatDashboard() {
       }`}
     >
       <header
-        className={`flex items-center justify-between border-b px-6 py-4 lg:px-8 ${
+        className={`${
+          isMobileListVisible ? "flex" : "hidden lg:flex"
+        } items-center justify-between border-b px-6 py-4 lg:px-8 ${
           isDark ? "border-slate-800/80" : "border-slate-100"
         }`}
       >
