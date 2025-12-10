@@ -19,17 +19,17 @@ export function MessageBubble({
   return (
     <div
       className={cn(
-        "flex w-full",
+        "flex w-full px-2 sm:px-4",
         isHuman ? "justify-start" : "justify-end",
         !isFirstOfGroup && "-mt-1.5",
       )}
     >
       <div
         className={cn(
-          "inline-flex max-w-[92%] sm:max-w-[70%] rounded-2xl px-4 py-2 text-sm shadow-sm",
+          "w-full max-w-full sm:max-w-[72%] md:max-w-[64%] rounded-2xl px-4 py-2 text-sm shadow-sm",
           isHuman
-            ? "rounded-bl-sm bg-white text-slate-900"
-            : "rounded-br-sm bg-emerald-600 text-white",
+            ? "mr-auto rounded-bl-sm bg-white text-slate-900"
+            : "ml-auto rounded-br-sm bg-emerald-600 text-white",
         )}
       >
         <p className="whitespace-pre-wrap break-words">
