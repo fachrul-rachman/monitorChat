@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { Download } from "lucide-react";
+import { ArrowLeft, Download } from "lucide-react";
 import type { ChatMessage } from "@/lib/types";
 import { Button } from "./ui/button";
 import { MessageList } from "./message-list";
@@ -17,6 +17,7 @@ type ChatPanelProps = {
   onRefresh: () => void;
   lastActivity?: string;
   isRealtimeConnected: boolean;
+  onBackToList?: () => void;
 };
 
 export function ChatPanel({
@@ -28,6 +29,7 @@ export function ChatPanel({
   onRefresh,
   lastActivity,
   isRealtimeConnected,
+  onBackToList,
 }: ChatPanelProps) {
   const { theme } = useTheme();
   const isDark = theme === "dark";
@@ -91,33 +93,46 @@ export function ChatPanel({
       }`}
     >
       <header
-        className={`flex items-center justify-between border-b px-6 py-4 ${
+        className={`flex items-center justify-between border-b px-4 py-3 sm:px-6 sm:py-4 ${
           isDark ? "border-slate-800/80" : "border-slate-200"
         }`}
       >
-        <div>
-          <p className="text-sm uppercase tracking-wide text-slate-400">
-            Session
-          </p>
-          <div className="flex items-center gap-3">
-            <h2 className="text-xl font-semibold">
-              {selectedSessionId ?? "Not selected"}
-            </h2>
-            <span
-              className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
-                isRealtimeConnected
-                  ? "bg-emerald-500/10 text-emerald-300"
-                  : "bg-amber-500/10 text-amber-300"
-              }`}
+        <div className="flex items-center gap-3">
+          {onBackToList && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="mr-1 h-8 w-8 rounded-full lg:hidden"
+              onClick={onBackToList}
             >
-              {isRealtimeConnected ? "Realtime online" : "Realtime fallback"}
-            </span>
-          </div>
-          {lastActivity && (
-            <p className="text-sm text-slate-400">
-              Last activity {formatHeaderTimestamp(lastActivity)}
-            </p>
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
           )}
+          <div>
+            <p className="text-xs sm:text-sm uppercase tracking-wide text-slate-400">
+              Session
+            </p>
+            <div className="mt-0.5 flex flex-wrap items-center gap-2 sm:gap-3">
+              <h2 className="text-base font-semibold sm:text-xl">
+                {selectedSessionId ?? "Not selected"}
+              </h2>
+              <span
+                className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium sm:text-xs ${
+                  isRealtimeConnected
+                    ? "bg-emerald-500/10 text-emerald-300"
+                    : "bg-amber-500/10 text-amber-300"
+                }`}
+              >
+                {isRealtimeConnected ? "Realtime online" : "Realtime fallback"}
+              </span>
+            </div>
+            {lastActivity && (
+              <p className="mt-0.5 text-xs text-slate-400 sm:text-sm">
+                Last activity {formatHeaderTimestamp(lastActivity)}
+              </p>
+            )}
+          </div>
         </div>
         <div className="flex items-center gap-2">
           <Button
@@ -125,11 +140,11 @@ export function ChatPanel({
             size="sm"
             onClick={handleExportSingle}
             disabled={!selectedSessionId}
-            className={
+            className={`hidden text-xs sm:inline-flex ${
               isDark
                 ? "border-slate-700 bg-slate-900 text-slate-100 hover:bg-slate-800 disabled:opacity-60"
                 : "disabled:opacity-60"
-            }
+            }`}
           >
             <Download className="mr-2 h-4 w-4" />
             Export This chat

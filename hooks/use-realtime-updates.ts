@@ -4,10 +4,11 @@ import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { getSocket } from "@/lib/socket";
 import type { ChatMessage, SessionSummary } from "@/lib/types";
-import { appendMessage, mergeSession } from "@/lib/api";
+import { appendMessage, mergeSession, type DataSource } from "@/lib/api";
 
 type UseRealtimeUpdatesOptions = {
   activeSessionId: string | null;
+  source: DataSource;
 };
 
 type NewMessagePayload = {
@@ -22,6 +23,7 @@ type NewMessagePayload = {
 
 export function useRealtimeUpdates({
   activeSessionId,
+  source,
 }: UseRealtimeUpdatesOptions) {
   const queryClient = useQueryClient();
   const [connected, setConnected] = useState(false);
@@ -57,10 +59,13 @@ export function useRealtimeUpdates({
         last_message_at: payload.created_at,
       };
 
-      queryClient.setQueryData<SessionSummary[]>(["sessions"], (current) => {
-        if (!current) return [sessionSummary];
-        return mergeSession(current, sessionSummary);
-      });
+      queryClient.setQueryData<SessionSummary[]>(
+        ["sessions", source],
+        (current) => {
+          if (!current) return [sessionSummary];
+          return mergeSession(current, sessionSummary);
+        },
+      );
 
       const newMessage: ChatMessage = {
         id: payload.id,
@@ -72,7 +77,7 @@ export function useRealtimeUpdates({
 
       if (activeSessionId === payload.session_id) {
         queryClient.setQueryData<ChatMessage[] | undefined>(
-          ["messages", payload.session_id],
+          ["messages", source, payload.session_id],
           (messages) => appendMessage(messages, newMessage),
         );
       }
@@ -90,7 +95,7 @@ export function useRealtimeUpdates({
         cancelAnimationFrame(statusFrame);
       }
     };
-  }, [activeSessionId, queryClient]);
+  }, [activeSessionId, queryClient, source]);
 
   return connected;
 }

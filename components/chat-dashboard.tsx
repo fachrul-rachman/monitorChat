@@ -20,6 +20,7 @@ export function ChatDashboard() {
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebouncedValue(search, 300);
   const [manualSessionId, setManualSessionId] = useState<string | null>(null);
+  const [isMobileListVisible, setIsMobileListVisible] = useState(true);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -33,6 +34,7 @@ export function ChatDashboard() {
     if (typeof window === "undefined") return;
     window.localStorage.setItem("dashboard-source", source);
     setManualSessionId(null);
+    setIsMobileListVisible(true);
   }, [source]);
 
   const {
@@ -73,6 +75,7 @@ export function ChatDashboard() {
 
   const realtimeConnected = useRealtimeUpdates({
     activeSessionId: selectedSessionId,
+    source,
   });
 
   const filteredSessions = useMemo(() => {
@@ -95,6 +98,13 @@ export function ChatDashboard() {
   const activeSession = sessions?.find(
     (session) => session.session_id === selectedSessionId,
   );
+
+  const handleSelectSession = (sessionId: string) => {
+    setManualSessionId(sessionId);
+    if (typeof window !== "undefined" && window.innerWidth < 1024) {
+      setIsMobileListVisible(false);
+    }
+  };
 
   const handleRefresh = async () => {
     await refetchSessions();
@@ -212,28 +222,39 @@ export function ChatDashboard() {
       </header>
 
       <div className="flex min-h-0 flex-1 flex-col lg:flex-row">
-        <div className="flex w-full min-h-0 flex-col border-b border-slate-800/60 lg:w-[360px] lg:flex-none lg:border-b-0 lg:border-r">
+        <div
+          className={`${
+            isMobileListVisible ? "flex" : "hidden"
+          } w-full min-h-0 flex-col border-b border-slate-800/60 lg:flex lg:w-[360px] lg:flex-none lg:border-b-0 lg:border-r`}
+        >
           <InboxSidebar
             sessions={filteredSessions}
             isLoading={sessionsLoading}
             error={normalizedSessionsError}
             selectedSessionId={selectedSessionId}
-            onSelect={setManualSessionId}
+            onSelect={handleSelectSession}
             searchValue={search}
             onSearchChange={setSearch}
             onRefresh={handleRefresh}
           />
         </div>
-        <ChatPanel
-          selectedSessionId={selectedSessionId}
-          source={source}
-          messages={messages}
-          isLoading={messagesLoading && Boolean(selectedSessionId)}
-          error={normalizedMessagesError}
-          onRefresh={handleRefresh}
-          lastActivity={activeSession?.last_message_at}
-          isRealtimeConnected={realtimeConnected}
-        />
+        <div
+          className={`${
+            isMobileListVisible ? "hidden" : "flex"
+          } min-h-0 flex-1 lg:flex`}
+        >
+          <ChatPanel
+            selectedSessionId={selectedSessionId}
+            source={source}
+            messages={messages}
+            isLoading={messagesLoading && Boolean(selectedSessionId)}
+            error={normalizedMessagesError}
+            onRefresh={handleRefresh}
+            lastActivity={activeSession?.last_message_at}
+            isRealtimeConnected={realtimeConnected}
+            onBackToList={() => setIsMobileListVisible(true)}
+          />
+        </div>
       </div>
     </div>
   );
