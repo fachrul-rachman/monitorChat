@@ -26,7 +26,7 @@ export function MessageBubble({
     >
       <div
         className={cn(
-          "max-w-[70%] rounded-2xl px-4 py-2 text-sm shadow-sm",
+          "inline-flex max-w-[92%] sm:max-w-[70%] rounded-2xl px-4 py-2 text-sm shadow-sm",
           isHuman
             ? "rounded-bl-sm bg-white text-slate-900"
             : "rounded-br-sm bg-emerald-600 text-white",
