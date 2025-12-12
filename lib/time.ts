@@ -36,14 +36,14 @@ export function formatTimestampLabel(input: string | number | Date) {
     hour: "2-digit",
     minute: "2-digit",
     hour12: false,
-    timeZone: "UTC",
+    timeZone: "Asia/Jakarta",
   });
 }
 
 export function formatHeaderTimestamp(input: string | number | Date) {
   const date = new Date(input);
   return date.toLocaleString(undefined, {
-    timeZone: "UTC",
+    timeZone: "Asia/Jakarta",
     weekday: "short",
     hour: "2-digit",
     minute: "2-digit",
